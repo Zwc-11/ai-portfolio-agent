@@ -29,6 +29,7 @@ def index():
     return render_template("index.html")
 
 
+
 @app.route("/api/analyze", methods=["POST"])
 def analyze():
     """Receive the profile form data and return the classification + AI analysis."""
@@ -38,16 +39,15 @@ def analyze():
     # The frontend sends a JSON object. Pull out the fields you need.
     # Example:
     #   age = data.get("age")
+
     #
     # Extract these fields: age, experience, risk_tolerance, goal, time_horizon
     # -----------------------------------------------------------------
-
-    age = None               # TODO: get "age" from data and convert to int
-    experience = None        # TODO: get "experience" from data
-    risk_tolerance = None    # TODO: get "risk_tolerance" from data
-    goal = None              # TODO: get "goal" from data
-    time_horizon = None      # TODO: get "time_horizon" from data
-
+    age = int(data.get("age", 30))               # TODO: get "age" from data and convert to int
+    experience = data.get("experience", "beginner")        # TODO: get "experience" from data
+    risk_tolerance = data.get("risk_tolerance", "medium")    # TODO: get "risk_tolerance" from data
+    goal = data.get("goal", "long_term_growth")              # TODO: get "goal" from data
+    time_horizon = data.get("time_horizon", "5+")      # TODO: get "time_horizon" from data
     # ─── END TODO 1 ──────────────────────────────────────────────
 
     profile = {
@@ -80,10 +80,10 @@ def generate_ai_analysis(profile, profile_type):
         import anthropic
         client = anthropic.Anthropic(api_key=api_key)
 
-        prompt = f"""You are a friendly AI investment advisor analyzing a new investor's profile.
+        prompt = f"""You are a smartest AI investment advisor analyzing a new investor's profile.
 
 Profile:
-- Age: {profile.get('age')}
+- Age: {profile.get('This is my age')}
 - Experience: {profile.get('experience')}
 - Risk Tolerance: {profile.get('risk_tolerance')}
 - Investment Goal: {profile.get('goal')}
@@ -91,7 +91,7 @@ Profile:
 
 Classification: {profile_type}
 
-Write a short (3-4 sentence) personalized analysis of this investor. Be specific about what their profile means for investing. Mention what types of investments might suit them and why. Be encouraging but honest about risks."""
+Write a short (10-12 sentence) personalized analysis of this investor. Be specific about what their profile means for investing. Mention what types of investments might suit them and why. Be encouraging but honest about risks."""
 
         response = client.messages.create(
             model="claude-sonnet-4-20250514",
@@ -99,6 +99,8 @@ Write a short (3-4 sentence) personalized analysis of this investor. Be specific
             messages=[{"role": "user", "content": prompt}],
         )
         return response.content[0].text.strip()
+    
+
     except Exception as e:
         return f"AI analysis unavailable: {e}"
 
