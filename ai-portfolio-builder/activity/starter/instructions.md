@@ -10,19 +10,38 @@ You'll complete **2 TODOs** across 2 Python files to make it work.
 
 ## Setup (One Time)
 
+### 1. Install dependencies
+
 Open a terminal, navigate to this folder, and run:
 
 ```
 pip install -r requirements.txt
 ```
 
+> If `pip` doesn't work, try `pip3 install -r requirements.txt`
+
 This installs Flask (web framework), Anthropic (AI), and python-dotenv (loads API key).
 
-Copy `.env.example` to `.env` and paste in the API key your instructor provides:
+### 2. Set up your API key
+
+Copy `.env.example` to `.env`:
+
+**Windows (Command Prompt):**
+```
+copy .env.example .env
+```
+
+**Windows (PowerShell):**
+```
+Copy-Item .env.example .env
+```
+
+**Mac / Linux:**
 ```
 cp .env.example .env
 ```
-Then open `.env` and replace `your_api_key_here` with the real key.
+
+Then open the `.env` file in your editor and replace `your_api_key_here` with the API key your instructor provides.
 
 ---
 
@@ -32,11 +51,20 @@ Then open `.env` and replace `your_api_key_here` with the real key.
 python app.py
 ```
 
-Then open **http://127.0.0.1:5000** in your browser.
+> If `python` doesn't work, try `python3 app.py`
+
+You should see:
+```
+ * Running on http://127.0.0.1:5000
+```
+
+**Keep this terminal open!** Then open **http://127.0.0.1:5000** in your browser.
+
+> If you see "Error: Failed to fetch" in the browser, it means the server isn't running. Check your terminal.
 
 ---
 
-## Your 3 TODOs
+## Your 2 TODOs
 
 ### TODO 1 — `app.py` (Extract profile fields)
 
