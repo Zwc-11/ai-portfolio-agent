@@ -20,6 +20,7 @@
 """
 
 
+
 def classify_profile(profile):
     age = profile.get("age", 30)
     experience = profile.get("experience", "beginner")
@@ -40,7 +41,7 @@ def classify_profile(profile):
     #
     # Write your if/elif/else chain below:
     # -----------------------------------------------------------------
-
     return "balanced"  # TODO: replace this with your rules
-
     # ─── END TODO 2 ──────────────────────────────────────────────
+
+

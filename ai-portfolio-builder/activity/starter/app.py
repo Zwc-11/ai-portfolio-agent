@@ -39,15 +39,14 @@ def analyze():
     # The frontend sends a JSON object. Pull out the fields you need.
     # Example:
     #   age = data.get("age")
-
     #
     # Extract these fields: age, experience, risk_tolerance, goal, time_horizon
     # -----------------------------------------------------------------
-    age = int(data.get("age", 30))               # TODO: get "age" from data and convert to int
-    experience = data.get("experience", "beginner")        # TODO: get "experience" from data
-    risk_tolerance = data.get("risk_tolerance", "medium")    # TODO: get "risk_tolerance" from data
-    goal = data.get("goal", "long_term_growth")              # TODO: get "goal" from data
-    time_horizon = data.get("time_horizon", "5+")      # TODO: get "time_horizon" from data
+    age = None               # TODO: get "age" from data and convert to int
+    experience = None        # TODO: get "experience" from data
+    risk_tolerance = None    # TODO: get "risk_tolerance" from data
+    goal = None              # TODO: get "goal" from data
+    time_horizon = None      # TODO: get "time_horizon" from data
     # ─── END TODO 1 ──────────────────────────────────────────────
 
     profile = {
@@ -107,3 +106,4 @@ Write a short (10-12 sentence) personalized analysis of this investor. Be specif
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
+
