@@ -1,0 +1,413 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="app-shell">
+
+  {% include "partials/_topnav.html" %}
+
+  <div class="app-body">
+
+    {% include "partials/_sidebar.html" %}
+
+    <div class="workspace">
+
+      <!-- ========== MAIN PANEL ========== -->
+      <main class="main-panel" id="main-panel">
+
+        <!-- Summary Strip -->
+        <section class="summary-strip" id="summary-strip">
+          <div class="summary-card">
+            <span class="summary-label">Portfolio Value</span>
+            <span class="summary-value" id="sv-value">$125,000</span>
+            <span class="summary-sub">+$8,420 all time</span>
+          </div>
+          <div class="summary-card">
+            <span class="summary-label">Expected Return</span>
+            <span class="summary-value text-green" id="sv-return">8.2–12.4%</span>
+            <span class="summary-sub">annualized</span>
+          </div>
+          <div class="summary-card">
+            <span class="summary-label">Risk Score</span>
+            <span class="summary-value" id="sv-risk">6.2<span style="font-size:12px;color:var(--text-muted)">/10</span></span>
+            <span class="summary-sub">moderate</span>
+          </div>
+          <div class="summary-card">
+            <span class="summary-label">Diversification</span>
+            <span class="summary-value" id="sv-divers">7.8<span style="font-size:12px;color:var(--text-muted)">/10</span></span>
+            <span class="summary-sub">good</span>
+          </div>
+          <div class="summary-card">
+            <span class="summary-label">Cash</span>
+            <span class="summary-value" id="sv-cash">5.0%</span>
+            <span class="summary-sub">$6,250</span>
+          </div>
+          <div class="summary-card">
+            <span class="summary-label">Horizon</span>
+            <span class="summary-value" id="sv-horizon">5+</span>
+            <span class="summary-sub">years</span>
+          </div>
+        </section>
+
+        <!-- Portfolio Comparison -->
+        <section>
+          <div class="section-header">
+            <h2 class="section-title">Portfolio Variants</h2>
+            <span class="section-badge" id="profile-badge">Moderate Growth</span>
+          </div>
+          <div class="comparison-grid" id="comparison-grid"></div>
+        </section>
+
+        <!-- Chart -->
+        <section class="chart-section">
+          <div class="chart-header">
+            <div class="chart-tabs">
+              <button class="chart-tab active" data-chart="performance">Performance</button>
+              <button class="chart-tab" data-chart="stock">Stock Chart</button>
+              <button class="chart-tab" data-chart="benchmark">Benchmark</button>
+            </div>
+            <div class="chart-controls">
+              <div class="time-range" id="time-range">
+                <button class="time-btn" data-r="1D">1D</button>
+                <button class="time-btn" data-r="1W">1W</button>
+                <button class="time-btn active" data-r="1M">1M</button>
+                <button class="time-btn" data-r="6M">6M</button>
+                <button class="time-btn" data-r="1Y">1Y</button>
+                <button class="time-btn" data-r="MAX">MAX</button>
+              </div>
+              <div class="portfolio-switcher" id="portfolio-switcher">
+                <button class="switch-btn active" data-v="base">Base</button>
+                <button class="switch-btn" data-v="safer">Safer</button>
+                <button class="switch-btn" data-v="higher">Higher</button>
+              </div>
+            </div>
+          </div>
+          <div class="chart-body">
+            <canvas id="main-chart"></canvas>
+          </div>
+        </section>
+
+        <!-- Detail Tabs -->
+        <section class="detail-section">
+          <div class="tab-bar" id="tab-bar">
+            <button class="tab-btn active" data-tab="overview">Overview</button>
+            <button class="tab-btn" data-tab="holdings">Holdings</button>
+            <button class="tab-btn" data-tab="allocation">Allocation</button>
+            <button class="tab-btn" data-tab="tradeoffs">Tradeoffs</button>
+            <button class="tab-btn" data-tab="reasoning">Agent Reasoning</button>
+            <button class="tab-btn" data-tab="chat">Follow-up</button>
+          </div>
+          <div class="tab-content" id="tab-content"></div>
+        </section>
+
+      </main>
+
+      <!-- ========== RIGHT RAIL ========== -->
+      <aside class="intel-rail" id="intel-rail">
+
+        <div class="rail-section">
+          <h3 class="rail-heading">AI Recommendation</h3>
+          <div class="ai-summary" id="ai-summary"></div>
+        </div>
+
+        <div class="rail-section">
+          <h3 class="rail-heading">Market News</h3>
+          <div class="news-feed" id="rail-news"></div>
+        </div>
+
+        <div class="rail-section">
+          <h3 class="rail-heading">Watchlist Movers</h3>
+          <div class="mover-list" id="rail-movers"></div>
+        </div>
+
+        <div class="rail-section">
+          <h3 class="rail-heading">Risk Alerts</h3>
+          <div id="rail-alerts"></div>
+        </div>
+
+        <div class="rail-section">
+          <h3 class="rail-heading">Upcoming Events</h3>
+          <div class="event-list" id="rail-events"></div>
+        </div>
+
+      </aside>
+
+    </div><!-- /workspace -->
+  </div><!-- /app-body -->
+</div><!-- /app-shell -->
+
+<!-- ========== PROFILE DRAWER ========== -->
+<div class="drawer-overlay" id="drawer-overlay">
+  <div class="drawer" id="drawer">
+    <div class="drawer-head">
+      <span class="drawer-title">Investor Profile</span>
+      <button class="drawer-close" id="drawer-close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="wizard-steps" id="wizard-steps">
+      <div class="wiz-step active" data-step="1"><span class="wiz-num">1</span><span class="wiz-label">Personal</span></div>
+      <div class="wiz-step" data-step="2"><span class="wiz-num">2</span><span class="wiz-label">Financial</span></div>
+      <div class="wiz-step" data-step="3"><span class="wiz-num">3</span><span class="wiz-label">Goals</span></div>
+      <div class="wiz-step" data-step="4"><span class="wiz-num">4</span><span class="wiz-label">Risk</span></div>
+      <div class="wiz-step" data-step="5"><span class="wiz-num">5</span><span class="wiz-label">Preferences</span></div>
+      <div class="wiz-step" data-step="6"><span class="wiz-num">6</span><span class="wiz-label">Style</span></div>
+    </div>
+
+    <div class="drawer-body">
+      <form id="profile-form">
+
+        <!-- Step 1: Personal Info -->
+        <div class="wizard-page active" data-page="1">
+          <div class="form-section-title">Personal Information</div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="form-label" for="pf-name">Full Name</label>
+              <input class="form-input" id="pf-name" type="text" name="full_name" placeholder="John Doe">
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="pf-age">Age</label>
+              <input class="form-input" id="pf-age" type="number" name="age" min="18" max="100" value="25" required>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="pf-country">Country</label>
+              <select class="form-select" id="pf-country" name="country">
+                <option value="US" selected>United States</option>
+                <option value="UK">United Kingdom</option>
+                <option value="CA">Canada</option>
+                <option value="AU">Australia</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="pf-exp">Investment Experience</label>
+              <select class="form-select" id="pf-exp" name="experience">
+                <option value="beginner" selected>Beginner (0-2 years)</option>
+                <option value="intermediate">Intermediate (2-5 years)</option>
+                <option value="advanced">Advanced (5+ years)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Financial Snapshot -->
+        <div class="wizard-page" data-page="2">
+          <div class="form-section-title">Financial Snapshot</div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="form-label" for="pf-income">Annual Income</label>
+              <select class="form-select" id="pf-income" name="annual_income">
+                <option value="under_50k">Under $50,000</option>
+                <option value="50k_100k" selected>$50,000 – $100,000</option>
+                <option value="100k_250k">$100,000 – $250,000</option>
+                <option value="250k_500k">$250,000 – $500,000</option>
+                <option value="over_500k">$500,000+</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="pf-networth">Net Worth</label>
+              <select class="form-select" id="pf-networth" name="net_worth">
+                <option value="under_50k">Under $50,000</option>
+                <option value="50k_250k" selected>$50,000 – $250,000</option>
+                <option value="250k_1m">$250,000 – $1M</option>
+                <option value="1m_5m">$1M – $5M</option>
+                <option value="over_5m">$5M+</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="pf-invest-amount">Amount to Invest</label>
+              <input class="form-input" id="pf-invest-amount" type="number" name="invest_amount" placeholder="100000" value="100000" min="1000">
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="pf-monthly">Monthly Contribution</label>
+              <input class="form-input" id="pf-monthly" type="number" name="monthly_contribution" placeholder="500" value="500" min="0">
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Investment Goals -->
+        <div class="wizard-page" data-page="3">
+          <div class="form-section-title">Investment Goals</div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="form-label" for="pf-goal">Primary Goal</label>
+              <select class="form-select" id="pf-goal" name="goal">
+                <option value="long_term_growth" selected>Long Term Growth</option>
+                <option value="retirement">Retirement Savings</option>
+                <option value="preservation">Capital Preservation</option>
+                <option value="aggressive_growth">Aggressive Growth</option>
+                <option value="income">Passive Income</option>
+                <option value="education">Education Fund</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="pf-horizon">Time Horizon</label>
+              <select class="form-select" id="pf-horizon" name="time_horizon">
+                <option value="1">Under 1 Year</option>
+                <option value="1-3">1 – 3 Years</option>
+                <option value="3-5">3 – 5 Years</option>
+                <option value="5+" selected>5 – 10 Years</option>
+                <option value="10+">10+ Years</option>
+              </select>
+            </div>
+            <div class="form-field full-width">
+              <label class="form-label" for="pf-target">Target Return (%/year)</label>
+              <input class="form-input" id="pf-target" type="number" name="target_return" placeholder="10" value="10" min="1" max="50" step="0.5">
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Risk Profile -->
+        <div class="wizard-page" data-page="4">
+          <div class="form-section-title">Risk Profile</div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="form-label" for="pf-risk">Risk Tolerance</label>
+              <select class="form-select" id="pf-risk" name="risk_tolerance">
+                <option value="very_low">Very Low — Protect capital above all</option>
+                <option value="low">Low — Small fluctuations OK</option>
+                <option value="medium" selected>Medium — Accept moderate swings</option>
+                <option value="high">High — Comfortable with large swings</option>
+                <option value="very_high">Very High — Maximize returns at any cost</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="pf-drawdown">Max Acceptable Drawdown</label>
+              <select class="form-select" id="pf-drawdown" name="max_drawdown">
+                <option value="5">5% — I'd panic</option>
+                <option value="10">10% — Uncomfortable but OK</option>
+                <option value="20" selected>20% — Part of investing</option>
+                <option value="30">30% — Long-term focus</option>
+                <option value="50">50% — I believe in recovery</option>
+              </select>
+            </div>
+            <div class="form-field full-width">
+              <label class="form-label">If your portfolio dropped 20% in a month, you would:</label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="drawdown_reaction" value="sell_all"> Sell everything</label>
+                <label class="radio-option"><input type="radio" name="drawdown_reaction" value="sell_some"> Sell some to reduce risk</label>
+                <label class="radio-option"><input type="radio" name="drawdown_reaction" value="hold" checked> Hold and wait</label>
+                <label class="radio-option"><input type="radio" name="drawdown_reaction" value="buy_more"> Buy more at lower prices</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Portfolio Preferences -->
+        <div class="wizard-page" data-page="5">
+          <div class="form-section-title">Portfolio Preferences</div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="form-label" for="pf-pref">Investment Style</label>
+              <select class="form-select" id="pf-pref" name="preference">
+                <option value="growth" selected>Growth</option>
+                <option value="value">Value</option>
+                <option value="balanced">Balanced</option>
+                <option value="dividend">Dividend / Income</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="pf-assets">Preferred Assets</label>
+              <select class="form-select" id="pf-assets" name="preferred_assets">
+                <option value="etfs_only">ETFs Only</option>
+                <option value="stocks_only">Stocks Only</option>
+                <option value="mixed" selected>ETFs + Stocks</option>
+                <option value="with_bonds">Include Bonds</option>
+                <option value="with_crypto">Include Crypto</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="pf-sectors">Sector Focus</label>
+              <select class="form-select" id="pf-sectors" name="sector_focus">
+                <option value="diversified" selected>Diversified</option>
+                <option value="tech">Technology</option>
+                <option value="healthcare">Healthcare</option>
+                <option value="energy">Energy</option>
+                <option value="financials">Financials</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="pf-esg">ESG / Ethical Investing</label>
+              <select class="form-select" id="pf-esg" name="esg">
+                <option value="no" selected>No Preference</option>
+                <option value="prefer">Prefer ESG</option>
+                <option value="strict">Strict ESG Only</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 6: Behavior & Style -->
+        <div class="wizard-page" data-page="6">
+          <div class="form-section-title">Behavior &amp; Style</div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="form-label" for="pf-rebalance">Rebalancing Frequency</label>
+              <select class="form-select" id="pf-rebalance" name="rebalance_freq">
+                <option value="monthly">Monthly</option>
+                <option value="quarterly" selected>Quarterly</option>
+                <option value="annual">Annually</option>
+                <option value="never">Set and Forget</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="pf-involvement">Involvement Level</label>
+              <select class="form-select" id="pf-involvement" name="involvement">
+                <option value="passive" selected>Passive — Auto-manage everything</option>
+                <option value="moderate">Moderate — Review & approve</option>
+                <option value="active">Active — I want full control</option>
+              </select>
+            </div>
+            <div class="form-field full-width">
+              <label class="form-label" for="pf-notes">Additional Notes</label>
+              <textarea class="form-input" id="pf-notes" name="notes" rows="3" placeholder="Any specific requirements or constraints..."></textarea>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="drawer-foot">
+      <div class="wizard-nav">
+        <button class="wizard-prev" type="button" id="wizard-prev" style="visibility:hidden">Back</button>
+        <button class="wizard-next" type="button" id="wizard-next">Next</button>
+        <button class="build-btn" type="button" id="build-btn" style="display:none">Build Portfolio</button>
+      </div>
+      <div class="build-error" id="build-error" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== AGENT PROCESS OVERLAY ========== -->
+<div class="process-overlay" id="process-overlay">
+  <div class="process-card">
+    <div class="process-header">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg>
+      <h3 class="process-title">Building Your Portfolio</h3>
+    </div>
+    <p class="process-desc">AI agents are analyzing your investor profile and constructing optimized allocations...</p>
+    <div class="process-steps" id="process-steps"></div>
+    <div class="process-bar"><div class="process-fill" id="process-fill"></div></div>
+  </div>
+</div>
+
+<!-- ========== USER MENU DROPDOWN ========== -->
+<div class="user-dropdown" id="user-dropdown">
+  <div class="ud-header">
+    <span class="avatar" style="width:32px;height:32px;font-size:12px">JD</span>
+    <div><div class="ud-name" id="ud-current-name">John D.</div><div class="ud-sub">Current Profile</div></div>
+  </div>
+  <div class="ud-divider"></div>
+  <div class="ud-section-title">Saved Profiles</div>
+  <div id="ud-profiles-list"></div>
+  <div class="ud-divider"></div>
+  <button class="ud-btn" id="ud-new-profile">+ New Profile</button>
+  <button class="ud-btn" id="ud-edit-profile">Edit Current Profile</button>
+</div>
+
+<!-- ========== SEARCH RESULTS ========== -->
+<div class="search-dropdown" id="search-dropdown"></div>
+
+{% endblock %}

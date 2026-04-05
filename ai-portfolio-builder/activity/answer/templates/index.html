@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activity 1 — Build Your Investor Profile</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">📊</div>
+      <h1>AI Investor Profile Builder</h1>
+      <p class="subtitle">Fill in your investor profile and let the AI analyze who you are.</p>
+    </div>
+
+    <form id="profile-form">
+
+      <!-- ====== FIELD 1: Name ====== -->
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" placeholder="Your name" required>
+      </div>
+
+      <!-- ====== FIELD 2: Age ====== -->
+      <div class="form-group">
+        <label for="age">Age</label>
+        <input type="number" id="age" name="age" min="18" max="100" value="25" required>
+      </div>
+
+      <!-- ====== FIELD 3: Investment Experience ====== -->
+      <div class="form-group">
+        <label for="experience">Investment Experience</label>
+        <select id="experience" name="experience" required>
+          <option value="beginner">Beginner (0-2 years)</option>
+          <option value="intermediate">Intermediate (2-5 years)</option>
+          <option value="advanced">Advanced (5+ years)</option>
+        </select>
+      </div>
+
+      <!-- ====== TODO 3 ANSWER: Three additional fields ====== -->
+
+      <!-- FIELD 4: Risk Tolerance -->
+      <div class="form-group">
+        <label for="risk_tolerance">Risk Tolerance</label>
+        <select id="risk_tolerance" name="risk_tolerance" required>
+          <option value="very_low">Very Low — Protect capital above all</option>
+          <option value="low">Low — Small fluctuations OK</option>
+          <option value="medium" selected>Medium — Accept moderate swings</option>
+          <option value="high">High — Comfortable with large swings</option>
+          <option value="very_high">Very High — Maximize returns at any cost</option>
+        </select>
+      </div>
+
+      <!-- FIELD 5: Investment Goal -->
+      <div class="form-group">
+        <label for="goal">Investment Goal</label>
+        <select id="goal" name="goal" required>
+          <option value="preservation">Capital Preservation</option>
+          <option value="income">Passive Income</option>
+          <option value="long_term_growth" selected>Long Term Growth</option>
+          <option value="aggressive_growth">Aggressive Growth</option>
+        </select>
+      </div>
+
+      <!-- FIELD 6: Time Horizon -->
+      <div class="form-group">
+        <label for="time_horizon">Time Horizon</label>
+        <select id="time_horizon" name="time_horizon" required>
+          <option value="1">Under 1 Year</option>
+          <option value="1-3">1-3 Years</option>
+          <option value="3-5">3-5 Years</option>
+          <option value="5+" selected>5-10 Years</option>
+          <option value="10+">10+ Years</option>
+        </select>
+      </div>
+
+      <!-- ====== END TODO 3 ANSWER ====== -->
+
+      <button type="submit" id="analyze-btn">Analyze My Profile</button>
+    </form>
+
+    <!-- ====== RESULTS SECTION ====== -->
+    <div id="results" class="results hidden">
+      <div class="result-card">
+        <div class="result-header">
+          <div class="result-icon">🧠</div>
+          <h2>Your Investor Profile</h2>
+        </div>
+        <div class="profile-badge" id="profile-badge"></div>
+        <div class="analysis" id="ai-analysis">
+          <div class="loading">Analyzing your profile...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("profile-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      var fd = new FormData(this);
+      var profile = {
+        name: fd.get("name"),
+        age: parseInt(fd.get("age"), 10),
+        experience: fd.get("experience"),
+        risk_tolerance: fd.get("risk_tolerance"),
+        goal: fd.get("goal"),
+        time_horizon: fd.get("time_horizon"),
+      };
+
+      // Show loading state
+      var btn = document.getElementById("analyze-btn");
+      btn.disabled = true;
+      btn.classList.add("loading-btn");
+      document.getElementById("results").classList.remove("hidden");
+      document.getElementById("ai-analysis").innerHTML = '<div class="loading">AI is analyzing your profile...</div>';
+      var badge = document.getElementById("profile-badge");
+      badge.textContent = "";
+      badge.className = "profile-badge";
+
+      fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(profile),
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          // Show profile type with color-coded badge
+          var label = data.profile_type.replace(/_/g, " ").replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+          badge.textContent = label;
+          badge.className = "profile-badge " + data.profile_type;
+
+          // Typewriter effect for AI analysis
+          var text = data.ai_analysis;
+          var el = document.getElementById("ai-analysis");
+          el.innerHTML = '<p class="analysis-text"></p>';
+          var p = el.querySelector("p");
+          var i = 0;
+          function type() {
+            if (i < text.length) {
+              p.textContent += text.charAt(i);
+              i++;
+              setTimeout(type, 12);
+            }
+          }
+          type();
+        })
+        .catch(function (err) {
+          document.getElementById("ai-analysis").innerHTML =
+            '<p class="error">Error: ' + err.message + '</p>';
+        })
+        .finally(function () {
+          btn.disabled = false;
+          btn.classList.remove("loading-btn");
+        });
+    });
+  </script>
+</body>
+</html>
