@@ -16,19 +16,19 @@
 
     <form id="profile-form">
 
-      <!-- ====== FIELD 1: Name (provided as example) ====== -->
+      <!-- ====== FIELD 1: Name ====== -->
       <div class="form-group">
         <label for="name">Full Name</label>
         <input type="text" id="name" name="name" placeholder="Your name" required>
       </div>
 
-      <!-- ====== FIELD 2: Age (provided as example) ====== -->
+      <!-- ====== FIELD 2: Age ====== -->
       <div class="form-group">
         <label for="age">Age</label>
         <input type="number" id="age" name="age" min="18" max="100" value="25" required>
       </div>
 
-      <!-- ====== FIELD 3: Investment Experience (provided) ====== -->
+      <!-- ====== FIELD 3: Investment Experience ====== -->
       <div class="form-group">
         <label for="experience">Investment Experience</label>
         <select id="experience" name="experience" required>
@@ -38,7 +38,9 @@
         </select>
       </div>
 
-      <!-- ====== FIELD 4: Risk Tolerance ====== -->
+      <!-- ====== TODO 3 ANSWER: Three additional fields ====== -->
+
+      <!-- FIELD 4: Risk Tolerance -->
       <div class="form-group">
         <label for="risk_tolerance">Risk Tolerance</label>
         <select id="risk_tolerance" name="risk_tolerance" required>
@@ -50,7 +52,7 @@
         </select>
       </div>
 
-      <!-- ====== FIELD 5: Investment Goal ====== -->
+      <!-- FIELD 5: Investment Goal -->
       <div class="form-group">
         <label for="goal">Investment Goal</label>
         <select id="goal" name="goal" required>
@@ -61,7 +63,7 @@
         </select>
       </div>
 
-      <!-- ====== FIELD 6: Time Horizon ====== -->
+      <!-- FIELD 6: Time Horizon -->
       <div class="form-group">
         <label for="time_horizon">Time Horizon</label>
         <select id="time_horizon" name="time_horizon" required>
@@ -73,10 +75,12 @@
         </select>
       </div>
 
+      <!-- ====== END TODO 3 ANSWER ====== -->
+
       <button type="submit" id="analyze-btn">Analyze My Profile</button>
     </form>
 
-    <!-- ====== RESULTS SECTION (provided — don't edit) ====== -->
+    <!-- ====== RESULTS SECTION ====== -->
     <div id="results" class="results hidden">
       <div class="result-card">
         <div class="result-header">
